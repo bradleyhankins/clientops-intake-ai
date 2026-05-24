@@ -4,7 +4,7 @@ ClientOps Intake AI is a diagnostic intake assistant for small-business operator
 
 ## Live Demo
 
-Streamlit deployment pending.
+[Launch ClientOps Intake AI](https://clientops-intake-ai.streamlit.app/)
 
 ## Why this project exists
 
@@ -56,7 +56,7 @@ The app evaluates:
 
 ## Suggested Test Flow
 
-1. Launch the live app after deployment.
+1. Launch the live app.
 2. Load the sample scenario or enter a fictional business profile.
 3. Select the biggest workflow problems.
 4. Generate the diagnostic report.
@@ -65,7 +65,7 @@ The app evaluates:
 
 ## Screenshots
 
-Screenshots will be added after live deployment and visual QA.
+Screenshots will be added after final visual QA.
 
 ## Tech Stack
 
@@ -114,6 +114,7 @@ I designed and built this project from concept to deployment, including:
 - Generating roadmap and action-plan outputs
 - Preparing fictional sample scenarios for public portfolio use
 - Publishing the project on GitHub
+- Deploying the live demo
 
 ### Business Value
 
