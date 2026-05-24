@@ -1,6 +1,6 @@
 import streamlit as st
 
-from ai_helpers import enhance_text
+from ai_helpers import enhance_text, stable_cache_key
 from pdf_helpers import markdown_to_pdf
 
 st.set_page_config(page_title="ClientOps Intake AI", page_icon="🧭", layout="wide")
@@ -298,7 +298,7 @@ roadmap_steps = roadmap(primary_key)
 actions = action_plan(primary_key, business_name)
 rules_summary = build_rules_summary(inputs, score, label, primary_key, recommendation, opportunities, actions)
 ai_prompt = build_ai_prompt(inputs, rules_summary, roadmap_steps)
-summary_cache_key = f"clientops_summary_{hash(str(inputs))}"
+summary_cache_key = stable_cache_key("clientops_summary", inputs)
 executive_summary = enhance_text(ai_prompt, rules_summary, summary_cache_key)
 report = build_report(inputs, score, label, primary_key, recommendation, opportunities, roadmap_steps, actions, executive_summary)
 pdf_report = markdown_to_pdf(report, title="ClientOps Intake AI Diagnostic Report")
