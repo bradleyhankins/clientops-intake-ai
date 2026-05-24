@@ -1,10 +1,21 @@
 # ClientOps Intake AI
 
-ClientOps Intake AI is a diagnostic intake assistant for small-business operators, managers, and consultants. It helps identify workflow bottlenecks, score operational maturity, recommend automation opportunities, match the user to the right AI Ops Toolkit app, and generate a 30-day improvement roadmap.
+ClientOps Intake AI is an AI-enhanced diagnostic intake assistant for small-business operators, managers, and consultants. It helps identify workflow bottlenecks, score operational maturity, recommend automation opportunities, match the user to the right AI Ops Toolkit app, and generate a 30-day improvement roadmap.
 
 ## Live Demo
 
 [Launch ClientOps Intake AI](https://clientops-intake-ai.streamlit.app/)
+
+## Current Version: v1.1
+
+ClientOps Intake AI combines a rules-based diagnostic engine with embedded AI-enhanced summary generation.
+
+The app is designed to work in two layers:
+
+1. **Rules-based core:** scores maturity, identifies bottlenecks, recommends the right toolkit app, builds automation opportunities, and creates a 30-day roadmap.
+2. **Embedded AI layer:** when an OpenAI token is available, the app quietly enhances the executive diagnostic summary with a more polished consulting-style explanation.
+
+If the AI call fails or an API key is unavailable, the app silently falls back to the rules-based diagnostic. The user experience stays the same.
 
 ## Why this project exists
 
@@ -12,37 +23,7 @@ Small businesses often know that operations feel messy, but they do not always k
 
 ClientOps Intake AI acts as the front door to the Practical AI Ops Toolkit by diagnosing common operating problems across performance visibility, sales follow-up, applicant review, process documentation, and manager reporting.
 
-## Who this helps
-
-ClientOps Intake AI is designed for:
-
-- Small business owners
-- Operations managers
-- Sales managers
-- Revenue leaders
-- Consultants
-- Workflow automation specialists
-- Teams that need a simple diagnostic before choosing a tool or process improvement path
-
-## Current Version: v1.0
-
-ClientOps Intake AI v1.0 includes:
-
-- Business profile intake
-- Workflow pain-point selection
-- Current tool/process assessment
-- Operational maturity scoring
-- Primary bottleneck diagnosis
-- Recommended AI Ops Toolkit app
-- Recommended automation opportunities
-- 30-day improvement roadmap
-- Manager action plan
-- Downloadable diagnostic report
-- Public-safe sample scenarios
-
 ## What it analyzes
-
-The app evaluates:
 
 - Performance visibility
 - Sales follow-up consistency
@@ -54,24 +35,51 @@ The app evaluates:
 - Operational urgency
 - Team size and workflow complexity
 
+## Workflow Outputs
+
+- Business profile intake
+- Workflow pain-point selection
+- Operational maturity score
+- Primary bottleneck diagnosis
+- Recommended AI Ops Toolkit app
+- Automation opportunities
+- AI-enhanced executive diagnostic summary with rules-based fallback
+- 30-day improvement roadmap
+- Manager action plan
+- Downloadable diagnostic report
+
+## Export Strategy
+
+Current export:
+
+- Markdown diagnostic report (`.md`) for GitHub-friendly and developer-friendly documentation
+
+Planned next upgrade:
+
+- PDF diagnostic report for a more user-friendly manager/client deliverable
+
+The markdown export is useful for transparency and version control, but PDF is the better format for non-technical users.
+
 ## Suggested Test Flow
 
 1. Launch the live app.
 2. Load the sample scenario or enter a fictional business profile.
 3. Select the biggest workflow problems.
 4. Generate the diagnostic report.
-5. Review the maturity score, primary bottleneck, recommended toolkit app, and 30-day roadmap.
+5. Review the maturity score, primary bottleneck, recommended toolkit app, AI-enhanced diagnostic summary, and 30-day roadmap.
 6. Download the diagnostic report.
 
 ## Screenshots
 
-Screenshots will be added after final visual QA.
+Screenshots will be refreshed after the embedded AI and PDF export pass.
 
 ## Tech Stack
 
 - Python
 - Streamlit
+- OpenAI API integration
 - Rules-based diagnostic logic
+- Silent AI fallback pattern
 - Markdown report export
 - GitHub
 - Streamlit Community Cloud
@@ -83,15 +91,19 @@ py -m pip install -r requirements.txt
 py -m streamlit run app.py
 ```
 
+## Environment Variables
+
+To enable embedded AI output:
+
+```bash
+OPENAI_TOKEN=your_api_key_here
+```
+
+The app still works without this token by using the rules-based fallback.
+
 ## Public Demo Note
 
 All sample data, names, companies, and scenarios used in this project are fictional and created for public portfolio demonstration purposes.
-
-## Portfolio Purpose
-
-This project was built as part of Bradley Hankins' AI operations and workflow automation portfolio.
-
-ClientOps Intake AI demonstrates how practical AI-assisted tools can support business diagnosis, workflow triage, operational maturity scoring, automation opportunity planning, and roadmap generation.
 
 ## Case Study
 
@@ -101,35 +113,11 @@ Small businesses often experience operational friction but lack a clear method f
 
 ### Solution
 
-ClientOps Intake AI guides a user through a structured diagnostic intake, scores workflow maturity, identifies the primary bottleneck, recommends a relevant toolkit app, and creates a 30-day action roadmap.
-
-### My Role
-
-I designed and built this project from concept to deployment, including:
-
-- Defining the diagnostic workflow
-- Designing the intake form
-- Creating maturity scoring logic
-- Mapping bottlenecks to recommended tools
-- Generating roadmap and action-plan outputs
-- Preparing fictional sample scenarios for public portfolio use
-- Publishing the project on GitHub
-- Deploying the live demo
+ClientOps Intake AI guides a user through a structured diagnostic intake, scores workflow maturity, identifies the primary bottleneck, recommends a relevant toolkit app, and creates a 30-day action roadmap. The embedded AI layer improves the executive summary when available while preserving a reliable rules-based fallback.
 
 ### Business Value
 
 ClientOps Intake AI helps operators move from vague operational frustration to a clear first action. It supports better prioritization, faster consulting discovery, and more structured workflow improvement planning.
-
-### Future Improvements
-
-Planned future improvements include:
-
-- PDF export options
-- Multi-business comparison
-- Saved diagnostic history
-- More industry-specific scenarios
-- Optional OpenAI API integration for dynamic consulting summaries
-- Direct links into recommended toolkit apps
 
 ## Built By
 
