@@ -8,13 +8,21 @@ DEFAULT_MODEL = "gpt-4.1-mini"
 TOKEN_NAME = "OPENAI_TOKEN"
 
 
+def read_token():
+    try:
+        token = st.secrets.get(TOKEN_NAME, None)
+    except Exception:
+        token = None
+    return token or os.getenv(TOKEN_NAME)
+
+
 def get_openai_client():
     try:
         from openai import OpenAI
     except ImportError:
         return None
 
-    token = os.getenv(TOKEN_NAME)
+    token = read_token()
     if not token:
         return None
 
