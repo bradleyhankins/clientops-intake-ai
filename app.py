@@ -1,17 +1,10 @@
 import streamlit as st
 
+from ai_helpers import enhance_text
+
 st.set_page_config(page_title="ClientOps Intake AI", page_icon="🧭", layout="wide")
 
-BUSINESS_TYPES = [
-    "Home Services",
-    "Field Sales",
-    "Local Service Business",
-    "Professional Services",
-    "Retail / Showroom",
-    "Startup / Small Team",
-    "Other",
-]
-
+BUSINESS_TYPES = ["Home Services", "Field Sales", "Local Service Business", "Professional Services", "Retail / Showroom", "Startup / Small Team", "Other"]
 TEAM_SIZES = ["1-3 people", "4-10 people", "11-25 people", "26+ people"]
 REVENUE_STAGES = ["Early / Pre-revenue", "Under $500K", "$500K-$1M", "$1M-$3M", "$3M+", "Prefer not to say"]
 TOOL_MATURITY = ["Mostly manual", "Basic spreadsheets", "CRM or project tool", "Multiple tools but disconnected", "Strong systems in place"]
@@ -39,12 +32,7 @@ SAMPLE_SCENARIOS = {
         "revenue_stage": "$1M-$3M",
         "tool_maturity": "CRM or project tool",
         "urgency": "High",
-        "pain_points": [
-            "Performance visibility is unclear",
-            "Sales follow-up is inconsistent",
-            "CRM notes or data are messy",
-            "Manager meetings lack clean numbers",
-        ],
+        "pain_points": ["Performance visibility is unclear", "Sales follow-up is inconsistent", "CRM notes or data are messy", "Manager meetings lack clean numbers"],
         "current_process": "Leads are tracked in a CRM, but managers still rely on daily notes, spreadsheets, and memory to prepare coaching conversations.",
         "desired_outcome": "Cleaner weekly reporting, better rep accountability, and stronger follow-up discipline.",
     },
@@ -55,38 +43,17 @@ SAMPLE_SCENARIOS = {
         "revenue_stage": "$3M+",
         "tool_maturity": "Multiple tools but disconnected",
         "urgency": "Medium",
-        "pain_points": [
-            "Processes live in people’s heads",
-            "Training is inconsistent",
-            "Reporting takes too much manual work",
-            "Customer communication is inconsistent",
-        ],
+        "pain_points": ["Processes live in people’s heads", "Training is inconsistent", "Reporting takes too much manual work", "Customer communication is inconsistent"],
         "current_process": "The team has experienced managers, but most processes are taught verbally and vary by employee.",
         "desired_outcome": "Document repeatable processes and create better training consistency.",
     },
 }
 
 TOOL_RECOMMENDATIONS = {
-    "performance": {
-        "app": "OpsPilot AI",
-        "why": "The biggest need is manager visibility, KPI reporting, rep performance review, or lead source analysis.",
-        "url": "https://opspilot-ai.streamlit.app/",
-    },
-    "followup": {
-        "app": "FollowUpPilot AI",
-        "why": "The biggest need is stronger customer communication, CRM notes, follow-up timing, or sales execution discipline.",
-        "url": "https://followuppilot-ai.streamlit.app/",
-    },
-    "recruiting": {
-        "app": "RecruitPilot AI",
-        "why": "The biggest need is organizing applicant review, resume notes, interview questions, and candidate tracking context.",
-        "url": "https://recruitpilot-ai.streamlit.app/",
-    },
-    "process": {
-        "app": "SOPPilot AI",
-        "why": "The biggest need is process documentation, training consistency, SOP creation, or quality control.",
-        "url": "https://soppilot-ai.streamlit.app/",
-    },
+    "performance": {"app": "OpsPilot AI", "why": "The biggest need is manager visibility, KPI reporting, rep performance review, or lead source analysis.", "url": "https://opspilot-ai.streamlit.app/"},
+    "followup": {"app": "FollowUpPilot AI", "why": "The biggest need is stronger customer communication, CRM notes, follow-up timing, or sales execution discipline.", "url": "https://followuppilot-ai.streamlit.app/"},
+    "recruiting": {"app": "RecruitPilot AI", "why": "The biggest need is organizing applicant review, resume notes, interview questions, and candidate tracking context.", "url": "https://recruitpilot-ai.streamlit.app/"},
+    "process": {"app": "SOPPilot AI", "why": "The biggest need is process documentation, training consistency, SOP creation, or quality control.", "url": "https://soppilot-ai.streamlit.app/"},
 }
 
 CSS = """
@@ -94,8 +61,7 @@ CSS = """
 .block-container{max-width:1180px;padding-top:1.35rem;padding-bottom:3rem}
 [data-testid="stSidebar"]{background:#111827}
 [data-testid="stSidebar"] h1,[data-testid="stSidebar"] h2,[data-testid="stSidebar"] h3,[data-testid="stSidebar"] p,[data-testid="stSidebar"] li,[data-testid="stSidebar"] span,[data-testid="stSidebar"] label{color:#f9fafb!important}
-[data-testid="stSidebar"] li::marker{color:#93c5fd!important}
-.hero{padding:1.9rem 2rem;border-radius:20px;background:linear-gradient(135deg,#111827 0%,#1f2937 52%,#334155 100%);color:#fff;box-shadow:0 18px 36px rgba(17,24,39,.18);margin-bottom:1rem;border:1px solid rgba(255,255,255,.08)}
+[data-testid="stSidebar"] li::marker{color:#93c5fd!important}.hero{padding:1.9rem 2rem;border-radius:20px;background:linear-gradient(135deg,#111827 0%,#1f2937 52%,#334155 100%);color:#fff;box-shadow:0 18px 36px rgba(17,24,39,.18);margin-bottom:1rem;border:1px solid rgba(255,255,255,.08)}
 .eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.75rem;font-weight:800;color:#93c5fd;margin-bottom:.65rem}.hero-title{font-size:2.25rem;line-height:1.08;font-weight:850;margin-bottom:.65rem}.hero-subtitle{font-size:1.02rem;line-height:1.62;color:#e5e7eb;max-width:900px}.hero-pills span{display:inline-block;padding:.35rem .65rem;margin:.75rem .28rem 0 0;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);font-weight:700;font-size:.78rem;color:#f8fafc}
 .section-title{margin-top:1.25rem;margin-bottom:.55rem;font-size:1.4rem;font-weight:850;color:#111827}.section-lede{color:#4b5563;line-height:1.6;margin-bottom:1rem;max-width:950px}.form-group-title{font-size:.9rem;font-weight:850;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin:.35rem 0 .15rem 0}
 .metric-card,.output-card,.warning-card,.success-card,.workflow-card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;box-shadow:0 8px 20px rgba(15,23,42,.055)}.metric-card{height:138px;padding:1rem;margin-bottom:.75rem}.metric-label{color:#6b7280;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}.metric-value{color:#111827;font-size:1.35rem;line-height:1.18;font-weight:900;overflow-wrap:break-word}.metric-note{color:#64748b;font-size:.85rem;margin-top:.55rem}.output-card,.warning-card,.success-card,.workflow-card{padding:1.15rem;margin-bottom:.8rem}.output-card{border-left:5px solid #111827}.warning-card{border-left:5px solid #f59e0b}.success-card{border-left:5px solid #059669}.workflow-card{border-left:5px solid #1d4ed8}.output-card h3,.warning-card h3,.success-card h3,.workflow-card h3{font-size:1.05rem;font-weight:850;color:#111827;margin-bottom:.4rem}.output-card p,.warning-card p,.success-card p,.workflow-card p,.output-card li,.warning-card li,.success-card li,.workflow-card li{color:#4b5563;line-height:1.52;font-size:.93rem}.note-box{padding:.9rem 1rem;border-radius:14px;background:#f8fafc;color:#334155;border:1px solid #e2e8f0;font-weight:650;margin:.9rem 0;font-size:.92rem}
@@ -127,14 +93,12 @@ def html_list(items: list[str]) -> str:
     return "<ul>" + "".join(f"<li>{item}</li>" for item in items) + "</ul>"
 
 
+def md_to_html(text: str) -> str:
+    return text.replace("\n", "<br>")
+
+
 def score_maturity(tool_maturity: str, pain_points: list[str], urgency: str, team_size: str) -> tuple[int, str]:
-    score = {
-        "Mostly manual": 25,
-        "Basic spreadsheets": 40,
-        "CRM or project tool": 58,
-        "Multiple tools but disconnected": 62,
-        "Strong systems in place": 82,
-    }.get(tool_maturity, 45)
+    score = {"Mostly manual": 25, "Basic spreadsheets": 40, "CRM or project tool": 58, "Multiple tools but disconnected": 62, "Strong systems in place": 82}.get(tool_maturity, 45)
     score -= min(len(pain_points) * 4, 28)
     score -= {"Low": 0, "Medium": 3, "High": 7, "Critical": 12}.get(urgency, 3)
     score -= {"1-3 people": 0, "4-10 people": 2, "11-25 people": 4, "26+ people": 6}.get(team_size, 2)
@@ -197,12 +161,51 @@ def action_plan(primary_key: str, business_name: str) -> list[str]:
     }[primary_key]
 
 
-def build_report(inputs: dict, score: int, label: str, primary_key: str, recommendation: dict, opportunities: list[str], roadmap_steps: list[str], actions: list[str]) -> str:
+def build_rules_summary(inputs: dict, score: int, label: str, primary_key: str, recommendation: dict, opportunities: list[str], roadmap_steps: list[str], actions: list[str]) -> str:
+    return f"""The business is currently at **{label}** with a workflow maturity score of **{score}%**. The primary bottleneck appears to be **{primary_key.title()}**, based on the selected pain points and current operating state.
+
+The best starting point is **{recommendation['app']}** because {recommendation['why']}
+
+Recommended first opportunities:
+{chr(10).join(f'- {item}' for item in opportunities)}
+
+Recommended first action: {actions[0]}
+"""
+
+
+def build_ai_prompt(inputs: dict, rules_summary: str, roadmap_steps: list[str]) -> str:
+    return f"""
+You are an AI operations consultant for small and mid-sized businesses.
+Use the structured diagnostic below to write a concise executive diagnostic summary.
+Do not invent facts. Keep the recommendation practical and action-oriented.
+
+Business profile:
+{inputs}
+
+Rules-based diagnostic:
+{rules_summary}
+
+Roadmap:
+{roadmap_steps}
+
+Return:
+1. Executive diagnosis
+2. Likely root cause
+3. Business risk if nothing changes
+4. First workflow improvement to tackle
+5. 30-day action plan
+"""
+
+
+def build_report(inputs: dict, score: int, label: str, primary_key: str, recommendation: dict, opportunities: list[str], roadmap_steps: list[str], actions: list[str], executive_summary: str) -> str:
     pain_lines = "\n".join(f"- {item}" for item in inputs["pain_points"]) or "- No pain points selected."
     opp_lines = "\n".join(f"- {item}" for item in opportunities)
     roadmap_lines = "\n".join(f"- {item}" for item in roadmap_steps)
     action_lines = "\n".join(f"- {item}" for item in actions)
     return f"""# ClientOps Intake AI Diagnostic Report
+
+## Executive Diagnostic Summary
+{executive_summary}
 
 ## Business Profile
 Business Name: {inputs['business_name'] or 'N/A'}
@@ -249,7 +252,7 @@ Generated by ClientOps Intake AI.
 
 with st.sidebar:
     st.title("ClientOps Intake AI")
-    st.caption("Version 1.0")
+    st.caption("Version 1.1")
     st.markdown("Diagnostic intake assistant for workflow bottlenecks, maturity scoring, automation opportunities, and 30-day roadmaps.")
     st.divider()
     st.markdown("### Outputs")
@@ -274,10 +277,8 @@ with st.form("clientops_form"):
         revenue_stage = st.selectbox("Revenue Stage", REVENUE_STAGES, index=REVENUE_STAGES.index(scenario.get("revenue_stage", "$1M-$3M")))
         tool_maturity = st.selectbox("Current Tool / Process Maturity", TOOL_MATURITY, index=TOOL_MATURITY.index(scenario.get("tool_maturity", "CRM or project tool")))
         urgency = st.selectbox("Urgency", URGENCY_LEVELS, index=URGENCY_LEVELS.index(scenario.get("urgency", "Medium")))
-
     form_group("Workflow pain points")
     pain_points = st.multiselect("Select the biggest current problems", PAIN_POINTS, default=scenario.get("pain_points", []))
-
     form_group("Current state and desired outcome")
     current_process = st.text_area("How does the current workflow operate today?", value=scenario.get("current_process", ""), height=120)
     desired_outcome = st.text_area("What outcome would make the biggest difference?", value=scenario.get("desired_outcome", ""), height=120)
@@ -287,25 +288,18 @@ if not submitted:
     st.markdown('<div class="note-box">Complete the intake or load a sample scenario, then generate the diagnostic report.</div>', unsafe_allow_html=True)
     st.stop()
 
-inputs = {
-    "business_name": business_name,
-    "business_type": business_type,
-    "team_size": team_size,
-    "revenue_stage": revenue_stage,
-    "tool_maturity": tool_maturity,
-    "urgency": urgency,
-    "pain_points": pain_points,
-    "current_process": current_process,
-    "desired_outcome": desired_outcome,
-}
-
+inputs = {"business_name": business_name, "business_type": business_type, "team_size": team_size, "revenue_stage": revenue_stage, "tool_maturity": tool_maturity, "urgency": urgency, "pain_points": pain_points, "current_process": current_process, "desired_outcome": desired_outcome}
 score, label = score_maturity(tool_maturity, pain_points, urgency, team_size)
 primary_key = classify_bottleneck(pain_points)
 recommendation = TOOL_RECOMMENDATIONS[primary_key]
 opportunities = automation_opportunities(primary_key, pain_points)
 roadmap_steps = roadmap(primary_key)
 actions = action_plan(primary_key, business_name)
-report = build_report(inputs, score, label, primary_key, recommendation, opportunities, roadmap_steps, actions)
+rules_summary = build_rules_summary(inputs, score, label, primary_key, recommendation, opportunities, roadmap_steps, actions)
+ai_prompt = build_ai_prompt(inputs, rules_summary, roadmap_steps)
+summary_cache_key = f"clientops_summary_{hash(str(inputs))}"
+executive_summary = enhance_text(ai_prompt, rules_summary, summary_cache_key)
+report = build_report(inputs, score, label, primary_key, recommendation, opportunities, roadmap_steps, actions, executive_summary)
 
 section_title("Diagnostic snapshot")
 mc1, mc2, mc3, mc4 = st.columns(4)
@@ -318,7 +312,8 @@ with mc3:
 with mc4:
     metric_card("Urgency", urgency)
 
-html_card("Why this recommendation", f"<p>{recommendation['why']}</p>", "workflow-card")
+section_title("Executive diagnostic summary")
+html_card("Recommended Direction", f"<p>{md_to_html(executive_summary)}</p>", "workflow-card")
 st.link_button(f"Open {recommendation['app']}", recommendation["url"], use_container_width=True)
 
 section_title("Automation opportunities")
@@ -337,7 +332,7 @@ section_title("Download diagnostic report")
 st.download_button("Download ClientOps Diagnostic Report", data=report, file_name="clientops-diagnostic-report.md", mime="text/markdown", use_container_width=True)
 
 section_title("What this app demonstrates")
-html_card("Portfolio Skills Shown", "<ul><li>Consulting-style intake workflow design</li><li>Rules-based maturity scoring</li><li>Bottleneck diagnosis and tool routing</li><li>Roadmap generation</li><li>Downloadable diagnostic reporting</li></ul>", "success-card")
+html_card("Portfolio Skills Shown", "<ul><li>AI-enhanced consulting summary with rules-based fallback</li><li>Consulting-style intake workflow design</li><li>Rules-based maturity scoring</li><li>Bottleneck diagnosis and tool routing</li><li>Roadmap generation</li><li>Downloadable diagnostic reporting</li></ul>", "success-card")
 
 with st.expander("How to use ClientOps Intake AI"):
     st.markdown("1. Load a sample scenario or enter a fictional business profile.\n2. Select the current workflow pain points.\n3. Generate the diagnostic.\n4. Review the maturity score, bottleneck, recommended app, automation opportunities, and roadmap.\n5. Download the diagnostic report.")
