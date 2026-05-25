@@ -1,6 +1,8 @@
+import hashlib
+
 import streamlit as st
 
-from ai_helpers import enhance_text, stable_cache_key
+from ai_helpers import enhance_text
 from core.diagnostics import run_diagnostic
 from core.prompts import build_ai_prompt, build_rules_summary
 from core.report_builder import build_report
@@ -31,6 +33,11 @@ CSS = """
 st.markdown(CSS, unsafe_allow_html=True)
 
 PRIVACY_NOTE = "Public demo note: Use fictional/sample data for demos. Do not enter sensitive, confidential, or regulated business information. If AI is enabled, entered text may be processed by the configured AI provider for output enhancement."
+
+
+def stable_cache_key(prefix: str, value: object) -> str:
+    digest = hashlib.sha256(str(value).encode("utf-8")).hexdigest()
+    return f"{prefix}_{digest}"
 
 
 def section_title(title: str, lede: str | None = None) -> None:
