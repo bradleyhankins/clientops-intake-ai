@@ -6,9 +6,9 @@ ClientOps Intake AI is an AI-enhanced diagnostic intake assistant for small-busi
 
 [Launch ClientOps Intake AI](https://clientops-intake-ai.streamlit.app/)
 
-## Current Version: v1.1
+## Current Version: v1.3
 
-ClientOps Intake AI combines a rules-based diagnostic engine with embedded AI-enhanced summary generation.
+ClientOps Intake AI combines a deterministic rules-based diagnostic engine with embedded AI-enhanced summary generation.
 
 The app is designed to work in two layers:
 
@@ -16,6 +16,63 @@ The app is designed to work in two layers:
 2. **Embedded AI layer:** when an OpenAI token is available, the app quietly enhances the executive diagnostic summary with a more polished consulting-style explanation.
 
 If the AI call fails or an API key is unavailable, the app silently falls back to the rules-based diagnostic. The user experience stays the same.
+
+## Architecture
+
+ClientOps has been refactored from a single-file prototype into a modular Streamlit application.
+
+```text
+clientops-intake-ai/
+├── app.py
+├── ai_helpers.py
+├── pdf_helpers.py
+├── requirements.txt
+├── core/
+│   ├── __init__.py
+│   ├── diagnostics.py
+│   ├── prompts.py
+│   └── report_builder.py
+├── data/
+│   ├── __init__.py
+│   └── sample_data.py
+└── tests/
+    └── test_diagnostics.py
+```
+
+### Module Responsibilities
+
+- `app.py` handles Streamlit layout, form inputs, rendering, and orchestration.
+- `core/diagnostics.py` contains scoring, bottleneck classification, opportunity logic, roadmap logic, and the main diagnostic runner.
+- `core/prompts.py` contains rules-based summary and AI prompt construction.
+- `core/report_builder.py` builds the structured report content used for PDF export.
+- `data/sample_data.py` stores sample scenarios, selectbox options, pain points, and toolkit routing data.
+- `ai_helpers.py` manages OpenAI access, guardrails, prompt length control, and silent fallback behavior.
+- `pdf_helpers.py` converts structured report text into a downloadable PDF.
+
+## AI Design Pattern
+
+The guiding principle is:
+
+```text
+Rules decide. AI polishes. Guardrails constrain. Fallback protects.
+```
+
+The rules-based diagnostic remains the source of truth for:
+
+- Maturity score
+- Primary bottleneck
+- Recommended toolkit app
+- Automation opportunities
+- 30-day roadmap
+- Manager action plan
+
+The AI layer is used only to improve the clarity and usefulness of the executive diagnostic summary. It should not change scores, recommendations, app routing, or business facts.
+
+## Privacy and Responsible Use
+
+This public demo is designed for fictional or sample data.
+
+Users should not enter sensitive, confidential, or regulated business information. When AI enhancement is enabled, text entered into the app may be processed by the configured AI provider for output enhancement.
 
 ## Why this project exists
 
@@ -46,19 +103,15 @@ ClientOps Intake AI acts as the front door to the Practical AI Ops Toolkit by di
 - AI-enhanced executive diagnostic summary with rules-based fallback
 - 30-day improvement roadmap
 - Manager action plan
-- Downloadable diagnostic report
+- Downloadable PDF diagnostic report
 
 ## Export Strategy
 
-Current export:
+Current user-facing export:
 
-- Markdown diagnostic report (`.md`) for GitHub-friendly and developer-friendly documentation
+- PDF diagnostic report for a manager/client-ready deliverable
 
-Planned next upgrade:
-
-- PDF diagnostic report for a more user-friendly manager/client deliverable
-
-The markdown export is useful for transparency and version control, but PDF is the better format for non-technical users.
+The app no longer exposes Markdown as the primary user-facing download because non-technical users expect a polished PDF report.
 
 ## Suggested Test Flow
 
@@ -67,11 +120,25 @@ The markdown export is useful for transparency and version control, but PDF is t
 3. Select the biggest workflow problems.
 4. Generate the diagnostic report.
 5. Review the maturity score, primary bottleneck, recommended toolkit app, AI-enhanced diagnostic summary, and 30-day roadmap.
-6. Download the diagnostic report.
+6. Download the PDF diagnostic report.
+
+## Automated Tests
+
+This repo includes unit tests for the deterministic diagnostic logic.
+
+Run tests locally with:
+
+```bash
+py -m pip install -r requirements.txt
+py -m pip install pytest
+py -m pytest
+```
+
+GitHub Actions runs the test suite automatically on push and pull request events.
 
 ## Screenshots
 
-Screenshots will be refreshed after the embedded AI and PDF export pass.
+Screenshots will be refreshed after the final UI and PDF polish pass.
 
 ## Tech Stack
 
@@ -79,8 +146,11 @@ Screenshots will be refreshed after the embedded AI and PDF export pass.
 - Streamlit
 - OpenAI API integration
 - Rules-based diagnostic logic
+- Modular app architecture
 - Silent AI fallback pattern
-- Markdown report export
+- PDF report export
+- Pytest
+- GitHub Actions
 - GitHub
 - Streamlit Community Cloud
 
